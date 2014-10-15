@@ -1,0 +1,24 @@
+mongorestore.exe dump
+>connected to: 127.0.0.1
+2014-10-15T16:46:23.000+0200 H:\TU-KL\Masters\MongoDB for Java Developers\Week 1
+\homework_1_1\hw1-1\dump\m101\funnynumbers.bson
+2014-10-15T16:46:23.000+0200    going into namespace [m101.funnynumbers]
+100 objects found
+2014-10-15T16:46:23.003+0200    Creating index: { key: { _id: 1 }, ns: "m101.fun
+nynumbers", name: "_id_" }
+2014-10-15T16:46:23.777+0200 H:\TU-KL\Masters\MongoDB for Java Developers\Week 1
+\homework_1_1\hw1-1\dump\m101\hw1.bson
+2014-10-15T16:46:23.778+0200    going into namespace [m101.hw1]
+1 objects found
+2014-10-15T16:46:23.794+0200    Creating index: { key: { _id: 1 }, ns: "m101.hw1
+", name: "_id_" }
+
+start mongo
+>use m101
+>m101.hw1.findOne()
+{
+        "_id" : ObjectId("50773061bf44c220307d8514"),
+        "answer" : 42,
+        "question" : "The Ultimate Question of Life, The Universe and Everything
+"
+}
