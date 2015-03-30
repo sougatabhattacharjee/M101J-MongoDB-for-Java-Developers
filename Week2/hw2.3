@@ -1,0 +1,23 @@
+Write a program in the language of your choice that will remove the grade of type "homework" 
+with the lowest score for each student from the dataset that you imported in the previous homework.
+Since each document is one grade, it should remove one document per student.
+
+in mongo shell execute the program written below
+
+var students = db.grades.find( { 'type' : 'homework' }, { 'student_id' : 1, 'score' : 1, '_id' : 0}).sort({ 'student_id' : 1, 'score' : 1 })
+
+// Create a variable to track student_id so we can detect when it changes
+var id = "";
+
+// Loop through our query results. Each document in the query is passed into a function as 'student'
+students.forEach(function (student) { 
+    if (id !== student.student_id) { 
+        db.grades.remove(student)
+        id = student.student_id; 
+    }
+});
+
+> db.grades.aggregate({'$group':{'_id':'$student_id', 'average':{$avg:'$score'}}}, {'$sort':{'average':-1}}, {'$limit':1})
+{ "_id" : 54, "average" : 96.19488173037341 }
+
+Answer > 54
