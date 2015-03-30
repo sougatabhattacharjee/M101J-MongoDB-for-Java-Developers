@@ -1,0 +1,32 @@
+Edit UserDAO.java file
+
+Inside addUser(....) method
+{
+String passwordHash = makePasswordHash(password, Integer.toString(random.nextInt()));
+Document user = new Document().append("_id", username).append("password", passwordHash);
+if (email != null && !email.equals("")) {
+    user.append("email", email);
+        }
+    try {
+        usersCollection.insertOne(user);
+        return true;
+        } 
+        .....
+        .....
+}
+
+Inside validateLogin(....) method
+{
+List<Document> all = usersCollection.find(Filters.eq("_id", username)).into(new ArrayList<Document>());
+
+        for(Document d : all)
+            user = d;
+
+        if (user == null) {
+            System.out.println("User not in database");
+            return null;
+        }
+        .....
+        .....
+}
+
