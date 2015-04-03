@@ -1,0 +1,58 @@
+> mongoimport -d school -c students < students.json
+
+This dataset holds the same type of data as last week's grade collection, but it's modeled differently. 
+
+Write a program in the language of your choice that will remove the lowest homework score for each student. 
+Since there is a single document for each student containing an array of scores, 
+you will need to update the scores array and remove the homework. 
+
+import java.net.UnknownHostException;
+import java.util.Iterator;
+
+import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
+import com.mongodb.MongoClient;
+
+public class hw31 {
+    public static void main(String[] args) throws UnknownHostException {
+        MongoClient client = new MongoClient();
+        DB base = client.getDB("school");
+        DBCollection collection = base.getCollection("students");
+        DBObject query = new BasicDBObject();
+        DBCursor cursor = collection.find(query);
+        try {
+            while (cursor.hasNext()) {
+                DBObject obj = cursor.next();
+                BasicDBList scores = (BasicDBList) obj.get("scores");
+                Iterator<Object> iterator = scores.iterator();
+                Double lowestScore = (double) 9999;
+                DBObject lowestScoreToRemove = null;
+                while (iterator.hasNext()) {
+                    DBObject innerCursor = (DBObject) iterator.next();
+                    String type = (String) innerCursor.get("type");
+                    Double score = (Double) innerCursor.get("score");
+                    if (type.equals("homework") && score < lowestScore) {
+                        lowestScoreToRemove = innerCursor;
+                        lowestScore = score;
+                    }
+                }
+                scores.remove(lowestScoreToRemove);
+                collection.update(new BasicDBObject("_id", obj.get("_id")),
+                        new BasicDBObject("$set", new BasicDBObject("scores",
+                                scores)));
+            }
+        } finally {
+            cursor.close();
+        }
+    }
+}
+
+In mongo shell
+> db.students.aggregate( { '$unwind' : '$scores' } , { '$group' : { '_id' : '$_id' , 'average' : { $avg : '$scores.score' } } } , { '$sort' : { 'average' : -1 } } , { '$limit' : 1 } )
+  13
+
+
